@@ -1,7 +1,7 @@
 const API_BASE_URL = 'https://aq-be.vercel.app/api/task';
 
 export const fetchAllTasks = async () => {
-  const response = await fetch(`${API_BASE_URL}?order=asc`);
+  const response = await fetch(`${API_BASE_URL}`);
   if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`);
   }
@@ -48,6 +48,18 @@ export const updateTaskStatus = async (id, status) => {
 export const deleteTask = async (id) => {
   const response = await fetch(`${API_BASE_URL}/${id}`, {
     method: 'DELETE',
+  });
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+  return response.json();
+};
+
+export const moveTaskOrder = async (id, ranking) => {
+  const response = await fetch(`${API_BASE_URL}/move-order`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id, ranking }),
   });
   if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`);

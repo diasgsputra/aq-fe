@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { CheckCircle, Circle, Edit, Trash2, X, Save } from 'lucide-react';
 
-const TaskItem = ({ task, onUpdateStatus, onUpdateTask, onDeleteTask, onError }) => {
+const TaskItem = ({ task, onUpdateStatus, onUpdateTask, onDeleteTask, onError, onDragStart, onDragOver, onDrop }) => { 
   const [editing, setEditing] = useState(false);
   const [editingName, setEditingName] = useState(task.name);
   const [editingDescription, setEditingDescription] = useState(task.description);
@@ -23,7 +23,13 @@ const TaskItem = ({ task, onUpdateStatus, onUpdateTask, onDeleteTask, onError })
   };
 
   return (
-    <li className="bg-white p-6 rounded-lg shadow-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-all duration-300 hover:shadow-xl hover:scale-[1.005]">
+    <li
+      className="bg-white p-6 rounded-lg shadow-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-all duration-300 hover:shadow-xl hover:scale-[1.005] cursor-grab active:cursor-grabbing" // Baris 28-29: Menambahkan styling cursor untuk drag
+      draggable="true" 
+      onDragStart={(e) => onDragStart(e, task.id)} 
+      onDragOver={(e) => onDragOver(e, task.id)} 
+      onDrop={(e) => onDrop(e, task.id)} 
+    >
       {editing ? (
         <div className="flex-1 w-full">
           <input
@@ -54,7 +60,7 @@ const TaskItem = ({ task, onUpdateStatus, onUpdateTask, onDeleteTask, onError })
           </div>
         </div>
       ) : (
-        <div className="flex-1 cursor-pointer" onClick={() => onUpdateStatus(task.id, task.status)}>
+        <div className="flex-1" onClick={() => onUpdateStatus(task.id, task.status)}>
           <div className="flex items-center gap-3">
             {task.status ? (
               <CheckCircle size={24} className="text-green-500 flex-shrink-0" />
@@ -62,11 +68,11 @@ const TaskItem = ({ task, onUpdateStatus, onUpdateTask, onDeleteTask, onError })
               <Circle size={24} className="text-gray-400 flex-shrink-0" />
             )}
             <div>
-              <p className={`text-xl font-semibold ${task.status ? 'line-through text-gray-500' : 'text-gray-800'}`}>
+              <p className={`text-xl font-semibold ${task.status ? 'text-gray-500' : 'text-gray-800'}`}>
                 {task.name}
               </p>
               {task.description && (
-                <p className={`text-gray-600 text-sm ${task.status ? 'line-through text-gray-400' : ''}`}>
+                <p className={`text-gray-600 text-sm ${task.status ? 'text-gray-400' : ''}`}>
                   {task.description}
                 </p>
               )}

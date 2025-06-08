@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import TaskForm from './components/TaskForm.jsx'; // Menambahkan ekstensi .js
-import TaskList from './components/TaskList.jsx'; // Menambahkan ekstensi .js
-import { fetchAllTasks, updateTaskStatus, updateTask, deleteTask } from './api/api.jsx'; // Menambahkan ekstensi .js
+import TaskForm from './components/TaskForm.jsx'; 
+import TaskList from './components/TaskList.jsx'; 
+import { fetchAllTasks, updateTaskStatus, updateTask, deleteTask, moveTaskOrder } from './api/api.jsx'; 
 
 const App = () => {
   const [tasks, setTasks] = useState([]);
@@ -61,6 +61,21 @@ const App = () => {
     }
   };
 
+  const handleMoveTaskOrder = async (id, newRanking, reorderedTasksFromChild) => {
+    const oldTasks = [...tasks];
+
+
+    setError('');
+    try {
+      await moveTaskOrder(id, newRanking);
+      await handleFetchAllTasks();
+    } catch (err) {
+      console.error('Gagal memperbarui urutan tugas:', err);
+      setError('Gagal memperbarui urutan. Silakan coba lagi.');
+      setTasks(oldTasks); 
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center p-4 font-inter">
       <div className="bg-white p-8 rounded-xl shadow-2xl w-full max-w-2xl transform transition-all duration-300 hover:scale-[1.005]">
@@ -80,6 +95,7 @@ const App = () => {
           onDeleteTask={handleDeleteTask}
           onError={setError}
           loading={loading}
+          onMoveOrder={handleMoveTaskOrder}
         />
       </div>
     </div>
